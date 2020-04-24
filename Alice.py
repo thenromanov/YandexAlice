@@ -12,7 +12,7 @@ animals = ['слон', 'кролик']
 
 
 def getSuggests(userId):
-    print(userId)
+    global sessionStorage, animals
     session = sessionStorage[userId]
     suggests = [{'title': suggest, 'hide': True} for suggest in session['suggests'][:2]]
     session['suggests'] = session['suggests'][1:]
@@ -27,7 +27,7 @@ def getSuggests(userId):
 
 
 def handleDialog(req, res):
-    global animals
+    global sessionStorage, animals
     userId = req['session']['user_id']
     if req['session']['new']:
         sessionStorage[userId] = {'suggests': ['Не хочу.', 'Не буду.', 'Отстань.']}
