@@ -11,19 +11,17 @@ sessionStorage = {}
 animals = ['слон', 'кролик']
 
 
-def getSuggests(userId):
-    global sessionStorage, animals
-    session = sessionStorage[userId]
-    suggests = [{'title': suggest, 'hide': True} for suggest in session['suggests'][:2]]
-    session['suggests'] = session['suggests'][1:]
-    sessionStorage[userId] = session
-    if len(suggests) < 2:
-        suggests.append({
-            'title': 'Ладно',
-            'url': 'https://market.yandex.ru/search?text=' + animals[0],
-            'hide': True
-        })
-    return suggests
+@app.route('/post', methods=['POST'])
+def main():
+    logging.info(f'Request: {request.json!r}')
+    response = {
+        'session': request.json['session'],
+        'version': request.json['version'],
+        'response': {'end_session': False}
+    }
+    handleDialog(request.json, response)
+    logging.info(f'Response: {response!r}')
+    return json.dumps(response)
 
 
 def handleDialog(req, res):
@@ -46,17 +44,19 @@ def handleDialog(req, res):
     res['response']['buttons'] = getSuggests(userId)
 
 
-@app.route('/post', methods=['POST'])
-def main():
-    logging.info(f'Request: {request.json!r}')
-    response = {
-        'session': request.json['session'],
-        'version': request.json['version'],
-        'response': {'end_session': False}
-    }
-    handleDialog(request.json, response)
-    logging.info(f'Response: {response!r}')
-    return json.dumps(response)
+def getSuggests(userId):
+    global sessionStorage, animals
+    session = sessionStorage[userId]
+    suggests = [{'title': suggest, 'hide': True} for suggest in session['suggests'][:2]]
+    session['suggests'] = session['suggests'][1:]
+    sessionStorage[userId] = session
+    if len(suggests) < 2:
+        suggests.append({
+            'title': 'Ладно',
+            'url': 'https://market.yandex.ru/search?text=' + animals[0],
+            'hide': True
+        })
+    return suggests
 
 
 if __name__ == '__main__':
