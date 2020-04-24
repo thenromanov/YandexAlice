@@ -1,1 +1,1 @@
-web: python Alice.py runserver 127.0.0.1:5000
+web: python3 Alice.py
