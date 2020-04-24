@@ -32,7 +32,7 @@ def handleDialog(req, res):
         res['response']['text'] = 'Привет! Купи слона!'
         res['response']['buttons'] = getSuggests(userId)
         return
-    if req['request']['original_utterance'].lower() in ['ладно', 'куплю', 'покупаю', 'хорошо']:
+    if any(argree in req['request']['original_utterance'].lower() for argree in ['ладно', 'куплю', 'покупаю', 'хорошо']):
         res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!'
         res['response']['end_session'] = True
         return
