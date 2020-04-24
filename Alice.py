@@ -29,6 +29,7 @@ def handleDialog(req, res):
     userId = req['session']['user_id']
     if req['session']['new']:
         sessionStorage[userId] = {'suggests': ['Не хочу.', 'Не буду.', 'Отстань.']}
+        animals = ['слон', 'кролик']
         res['response']['text'] = f'Привет! Купи {animals[0]}а!'
         res['response']['buttons'] = getSuggests(userId)
         return
