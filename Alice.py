@@ -28,8 +28,11 @@ def getSuggests(userId):
 
 
 def handleDialog(req, res):
-    global animalChanged
+    global animalChanged, animals
     userId = req['session']['user_id']
+    if req['session']['new']:
+        animals = ['слон', 'кролик']
+        animalChanged = True
     if animalChanged:
         sessionStorage[userId] = {'suggests': ['Не хочу.', 'Не буду.', 'Отстань.']}
         res['response']['text'] = f'Привет! Купи {animals[0]}а!'
