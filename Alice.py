@@ -27,6 +27,7 @@ def getSuggests(userId):
 
 
 def handleDialog(req, res):
+    global animals
     userId = req['session']['user_id']
     if req['session']['new']:
         sessionStorage[userId] = {'suggests': ['Не хочу.', 'Не буду.', 'Отстань.']}
@@ -35,8 +36,10 @@ def handleDialog(req, res):
         return
     if any(argree in req['request']['original_utterance'].lower() for argree in ['ладно', 'куплю', 'покупаю', 'хорошо']):
         res['response']['text'] = f'{animals[0][0].upper() + animals[0][1:]}а можно найти на Яндекс.Маркете!'
-        animals.pop(0)
-        res['session']['new'] = True
+        animals = animals[1:]
+        if len(animals) > 0:
+            sessionStorage[userId] = {'suggests': ['Не хочу.', 'Не буду.', 'Отстань.']}
+            res['response']['text'] += f' А купи {animals[0]}а!'
         res['response']['end_session'] = len(animals) == 0
         return
     res['response']['text'] = f"Все говорят '{req['request']['original_utterance']}', а ты купи {animals[0]}а!"
