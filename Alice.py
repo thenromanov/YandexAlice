@@ -8,6 +8,8 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
 sessionStorage = {}
+animals = ['слон', 'кролик']
+animalChanged = True
 
 
 def getSuggests(userId):
@@ -19,24 +21,28 @@ def getSuggests(userId):
     if len(suggests) < 2:
         suggests.append({
             'title': 'Ладно',
-            'url': 'https://market.yandex.ru/search?text=слон',
+            'url': f'https://market.yandex.ru/search?text={animals[0]}',
             'hide': True
         })
     return suggests
 
 
 def handleDialog(req, res):
+    global animalChanged
     userId = req['session']['user_id']
-    if req['session']['new']:
+    if animalChanged:
         sessionStorage[userId] = {'suggests': ['Не хочу.', 'Не буду.', 'Отстань.']}
-        res['response']['text'] = 'Привет! Купи слона!'
+        res['response']['text'] = f'Привет! Купи {animals[0]}а!'
         res['response']['buttons'] = getSuggests(userId)
+        animalChanged = False
         return
     if any(argree in req['request']['original_utterance'].lower() for argree in ['ладно', 'куплю', 'покупаю', 'хорошо']):
-        res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!'
-        res['response']['end_session'] = True
+        res['response']['text'] = f'{animals[0][0].upper() + animals[0][1:]}а можно найти на Яндекс.Маркете!'
+        animals.pop(0)
+        res['response']['end_session'] = len(animals) == 0
+        animalChanged = True
         return
-    res['response']['text'] = f"Все говорят '{req['request']['original_utterance']}', а ты купи слона!"
+    res['response']['text'] = f"Все говорят '{req['request']['original_utterance']}', а ты купи {animals[0]}а!"
     res['response']['buttons'] = getSuggests(userId)
 
 
