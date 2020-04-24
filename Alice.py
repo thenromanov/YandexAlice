@@ -38,6 +38,7 @@ def handleDialog(req, res):
         if len(animals) > 0:
             sessionStorage[userId] = {'suggests': ['Не хочу.', 'Не буду.', 'Отстань.']}
             res['response']['text'] += f' А купи {animals[0]}а!'
+            res['response']['buttons'] = getSuggests(userId)
         res['response']['end_session'] = len(animals) == 0
         return
     res['response']['text'] = f"Все говорят '{req['request']['original_utterance']}', а ты купи {animals[0]}а!"
